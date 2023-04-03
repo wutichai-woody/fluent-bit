@@ -25,6 +25,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/utsname.h>
+#include <time.h>
 
 /* Helpers to convert/format version string */
 #define STR_HELPER(s)      #s
@@ -39,6 +41,9 @@
                              FLB_VERSION_PATCH)
 #define FLB_VERSION_STR     "@FLB_VERSION_STR@"
 #define FLB_GIT_HASH        "@FLB_GIT_HASH@"
+
+#define HYPER_VERSION   "@HYPER_VERSION@"
+#define HYPER_UUID      "@HYPER_UUID@"
 
 static inline void flb_version()
 {
@@ -58,6 +63,7 @@ static inline void flb_version_banner()
     const char *copyright_color = ANSI_BOLD ANSI_YELLOW;
     const char *bold_color = ANSI_BOLD;
     const char *reset_color = ANSI_RESET;
+    const char *hyper_color = ANSI_GREEN;
 
     #ifdef FLB_LOG_NO_CONTROL_CHARS
     copyright_color = "";
@@ -77,14 +83,34 @@ static inline void flb_version_banner()
             "%sFluent Bit v%s | NIGHTLY_BUILD=%s - DO NOT USE IN PRODUCTION!"
             "%s\n", bold_color, FLB_VERSION_STR, STR(FLB_NIGHTLY_BUILD), reset_color);
 #else
+    struct utsname uts;
+    uname(&uts);
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
     fprintf(stderr,
-            "%sFluent Bit v%s%s\n", bold_color, FLB_VERSION_STR, reset_color);
+            "* %sHyper agent stream version : %s-%s%s\n", hyper_color, HYPER_VERSION, FLB_GIT_HASH, reset_color);
+    fprintf(stderr,
+            "* %sSystem UUID : %s%s\n", hyper_color, HYPER_UUID, reset_color);
+    fprintf(stderr,
+            "* %sSystem built date : %d-%02d-%02d %02d:%02d:%02d%s\n", hyper_color, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, reset_color);
+    fprintf(stderr,
+            "* %sOperating system : %s/%s%s\n", hyper_color, uts.sysname, uts.machine, reset_color);
+
 #endif
+/*
     fprintf(stderr, "* %sCopyright (C) 2015-2022 The Fluent Bit Authors%s\n",
             copyright_color, reset_color);
     fprintf(stderr, "* Fluent Bit is a CNCF sub-project under the "
             "umbrella of Fluentd\n");
     fprintf(stderr, "* https://fluentbit.io\n\n");
+*/
 }
 
+/*
+	logger.Infof("Hyper engine version : %s", Version)
+	logger.Infof("System UUID : %s", AppUUID)
+	logger.Infof("System built date : %s", DateBuilt)
+	logger.Infof("Operating system : " + runtime.GOOS + "/" + runtime.GOARCH)
+
+*/
 #endif

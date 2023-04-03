@@ -177,11 +177,11 @@ static void sp_info(struct flb_sp *sp)
     struct mk_list *head;
     struct flb_sp_task *task;
 
-    flb_info("[sp] stream processor started");
+    flb_info("[hyper-agent] stream started");
 
     mk_list_foreach(head, &sp->tasks) {
         task = mk_list_entry(head, struct flb_sp_task, _head);
-        flb_info("[sp] registered task: %s", task->name);
+        flb_info("[hyper-agent] registered task: %s", task->name);
     }
 }
 

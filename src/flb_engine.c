@@ -667,9 +667,11 @@ int flb_engine_start(struct flb_config *config)
         fprintf(stderr, "[engine] log start failed\n");
         return -1;
     }
-
+    /*
     flb_info("[fluent bit] version=%s, commit=%.10s, pid=%i",
              FLB_VERSION_STR, FLB_GIT_HASH, getpid());
+    */
+    flb_info("[hyper-agent] starting on pid=%i", getpid());
 
     /* Debug coroutine stack size */
     flb_utils_bytes_to_human_readable_size(config->coro_stack_size,
